@@ -73,7 +73,8 @@ services:
       dockerfile: Dockerfile
     container_name: napp1
     environment:
-      - NAPP2_HOST=napp2
+      - CHILD_NODE_HOST=napp2
+      - IS_MASTER=yes
     restart: always
     networks:
       display:
