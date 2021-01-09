@@ -1,0 +1,15 @@
+{
+  "service_name": "nginx",
+  "propagation_format": "w3c",
+  "sampler": {
+    "type": "const",
+    "param": 1
+  },
+  "reporter": {
+    "localAgentHostPort": "jaegertracing:6831"
+  },
+  "baggage_restrictions": {
+    "denyBaggageOnInitializationFailure": false,
+    "hostPort": ""
+  }
+}

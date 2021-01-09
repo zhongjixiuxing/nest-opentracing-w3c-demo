@@ -1,0 +1,23 @@
+{
+  "moduleFileExtensions": ["js", "json", "ts"],
+  "rootDir": ".",
+  "modulePaths": ["src", "test"],
+  "testEnvironment": "node",
+  "testRegex": ".e2e-spec.ts$",
+  "transform": {
+    "^.+\\.(t|j)s$": "ts-jest"
+  },
+  "setupFiles": [
+    "./setup.ts"
+  ],
+  "setupFilesAfterEnv": [
+    "./setupTests.ts"
+  ],
+  "globalTeardown": "./globalTeardown.ts",
+  "globalSetup": "./globalSetup.ts",
+  "maxConcurrency": 1,
+  "moduleNameMapper": {
+    "@app/(.*)": "<rootDir>/../src/$1",
+    "@test/(.*)": "<rootDir>/../test/$1"
+  }
+}

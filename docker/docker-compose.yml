@@ -1,0 +1,98 @@
+version: '3'
+
+services:
+  loki:
+    image: grafana/loki:1.6.0
+    container_name: loki
+    ports:
+      - '3100:3100'
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - display
+
+  promtail:
+    image: grafana/promtail:1.6.0
+    container_name: promtail
+    volumes:
+      - /var/log:/var/log
+    command: -config.file=/etc/promtail/config.yml
+    networks:
+      - display
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - '3000:3000'
+    networks:
+      - display
+
+  jaegertracing:
+    image: jaegertracing/all-in-one:1.21
+    container_name: jaegertracing
+    environment:
+      - COLLECTOR_ZIPKIN_HTTP_PORT=9411
+    ports:
+      - 5775:5775
+      - 6831:6831
+      - 6832:6832
+      - 6832:6832/udp
+      - 5778:5778
+      - 16686:16686
+      - 14268:14268
+      - 14250:14250
+      - 9411:9411
+    expose:
+      - '5775'
+      - '6831'
+      - '6832'
+      - '5778'
+      - '14268'
+      - '14250'
+      - '9411'
+    networks:
+      - display
+
+  nginx-tracing:
+    image: 'anxing131/nginx-opentracing:w3c'
+    container_name: nginx-tracing
+    restart: always
+    ports:
+      - 80:80
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - /etc/localtime:/etc/localtime
+    networks:
+      display:
+
+  napp1:
+    # image: 'napp1'
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: napp1
+    environment:
+      - NAPP2_HOST=napp2
+    restart: always
+    networks:
+      display:
+
+  napp2:
+    # image: 'napp2'
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: napp2
+    restart: always
+    networks:
+      display:
+
+networks:
+  display:
+    name: 'display'
+    ipam:
+      driver: default
+      config:
+        - subnet: '172.16.5.0/24'
+          #gateway: "172.16.5.1" 当前3.x 版本不支持，在2.x版本的属性，暂没替代方案
